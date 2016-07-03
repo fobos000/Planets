@@ -12,15 +12,15 @@ import SceneKit
 
 class GameViewController: UIViewController {
 
+    let scene = SCNScene()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let scene = SCNScene()
         
         let cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
         scene.rootNode.addChildNode(cameraNode)
-        cameraNode.position = SCNVector3(x: 0, y: 15, z: 0)
+        cameraNode.position = SCNVector3(x: 0, y: 30, z: 0)
         
         // Create Omni Light
         let lightNode = SCNNode()
@@ -39,17 +39,14 @@ class GameViewController: UIViewController {
         
         let planetNode = sphereNode(1.0)
         
-        let satellite = sphereNode(0.5)
-        let satelliteMaterial = satellite.geometry!.firstMaterial!
-        satelliteMaterial.diffuse.contents = UIColor.whiteColor()
-        satelliteMaterial.emission.contents = UIColor.redColor()
-        satellite.position = SCNVector3(2.0, 0.0, 0.0)
-        
         let constraint = SCNLookAtConstraint(target: planetNode)
         cameraNode.constraints = [constraint]
         
         scene.rootNode.addChildNode(planetNode)
-        planetNode.addChildNode(satellite)
+        
+        for i in 1..<9 {
+            addSphere(SCNVector3(Float(i), 0.0, 0.0))
+        }
         
         // retrieve the SCNView
         let scnView = self.view as! SCNView
@@ -62,6 +59,20 @@ class GameViewController: UIViewController {
         let geometry = SCNSphere(radius: radius)
         let node = SCNNode(geometry: geometry)
         return node
+    }
+    
+    func defaultSphereNode() -> SCNNode {
+        return sphereNode(0.2)
+    }
+    
+    func addNode(node: SCNNode, point: SCNVector3)  {
+        scene.rootNode.addChildNode(node)
+        node.position = point
+    }
+    
+    func addSphere(point: SCNVector3) {
+        let sphereNode = defaultSphereNode()
+        addNode(sphereNode, point: point)
     }
     
     override func shouldAutorotate() -> Bool {
